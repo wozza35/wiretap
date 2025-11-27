@@ -68,6 +68,28 @@ RSpec.describe Wiretap::Proxy do
     end
   end
 
+  describe "method calls with blocks" do
+    let(:target_class) do
+      Class.new do
+        def foo(n)
+          yield n
+          yield n + 1
+        end
+      end
+    end
+
+    it "invokes method with block on the target object and returns the last yielded value" do
+      expect(target).to receive(:foo).with(5).and_call_original
+      result = unit.foo(5) { |x| x * 2 }
+      expect(result).to eq 12
+    end
+
+    it 'records the values yielded to the block' do
+      unit.foo(5) {}
+      expect(unit.called_methods.map(&:yielded_values)).to contain_exactly([[5], [6]])
+    end
+  end
+
   describe '#respond_to_missing?' do
     let(:target_class) do
       Class.new do
