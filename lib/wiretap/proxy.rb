@@ -4,18 +4,19 @@ require 'wiretap/called_method'
 require 'wiretap/block_proxy'
 
 module Wiretap
-  class Proxy
+  class Proxy < SimpleDelegator
     attr_reader :called_methods
 
     def initialize(target)
       @target = target
       @called_methods = []
+      super(target)
     end
 
     def method_missing(method_name, *args, &block)
       block_proxy = BlockProxy.new(block) if block_given?
 
-      result = target.public_send(method_name, *args, &(block_proxy || block))
+      result = Proxy.new(target.public_send(method_name, *args, &(block_proxy || block)))
 
       @called_methods << CalledMethod.new(
         method_name,

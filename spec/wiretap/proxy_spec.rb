@@ -90,6 +90,21 @@ RSpec.describe Wiretap::Proxy do
     end
   end
 
+  describe "nested method calls" do
+    let(:target) { 'foo' }
+
+    subject do
+      unit.reverse.upcase
+    end
+
+    it 'handles nested method calls correctly' do
+      expect(subject).to eq 'OOF'
+      expect(unit.called_methods.map(&:name)).to eq([:reverse])
+      second_proxy = unit.called_methods.first.return_value
+      expect(second_proxy.called_methods.map(&:name)).to eq([:upcase])
+    end
+  end
+
   describe '#respond_to_missing?' do
     let(:target_class) do
       Class.new do
