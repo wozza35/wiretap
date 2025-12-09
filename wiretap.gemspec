@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["James Wozniak"]
   spec.email = ["wozza35@hotmail.com"]
 
-  spec.summary = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description = "TODO: Write a longer description or delete this line."
+  spec.summary = "A tool to monitor and record method calls on Ruby objects."
+  spec.description = "Wiretap is a Ruby gem that allows you to wrap any object and monitor the method calls made to it, including arguments, return values, and yielded values from blocks."
   spec.homepage = "https://www.github.com/wozza35/wiretap"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
