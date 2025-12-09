@@ -7,7 +7,7 @@ module Wiretap
     def to_h
       result = object_attributes
       result.merge!(
-        called_methods: proxied_object.called_methods.map do |called_method|
+        called_methods: proxied_object.wiretap_called_methods.map do |called_method|
           {
             name: called_method.name,
             args: called_method.args&.any? ? called_method.args : nil,
@@ -15,7 +15,7 @@ module Wiretap
             result: self.class.new(called_method.return_value).to_h
           }.compact
         end
-      ) if proxied_object.called_methods.any?
+      ) if proxied_object.wiretap_called_methods.any?
       result
     end
 
@@ -25,8 +25,8 @@ module Wiretap
 
     def object_attributes
       {
-        name: proxied_object.target_class,
-        value: proxied_object.target_value
+        name: proxied_object.wiretap_target_class,
+        value: proxied_object.wiretap_target_value
       }
     end
   end

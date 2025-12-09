@@ -6,7 +6,6 @@ require 'wiretap/result'
 
 module Wiretap
   class Proxy < SimpleDelegator
-    attr_reader :called_methods
 
     def initialize(target)
       @target = target
@@ -33,20 +32,24 @@ module Wiretap
       target.respond_to?(method_name, include_private) || super
     end
 
-    def target_class
+    def wiretap_called_methods
+      called_methods
+    end
+
+    def wiretap_target_class
       target.class.name
     end
 
-    def target_value
+    def wiretap_target_value
       target.to_s
     end
 
-    def result
+    def wiretap_result
       Result.new(self)
     end
 
     private
 
-    attr_reader :target
+    attr_reader :target, :called_methods
   end
 end
