@@ -2,6 +2,7 @@
 
 require 'wiretap/called_method'
 require 'wiretap/block_proxy'
+require 'wiretap/result'
 
 module Wiretap
   class Proxy < SimpleDelegator
@@ -16,20 +17,32 @@ module Wiretap
     def method_missing(method_name, *args, &block)
       block_proxy = BlockProxy.new(block) if block_given?
 
-      result = Proxy.new(target.public_send(method_name, *args, &(block_proxy || block)))
+      value = Proxy.new(target.public_send(method_name, *args, &(block_proxy || block)))
 
       @called_methods << CalledMethod.new(
         method_name,
         args: args,
         yielded_values: block_proxy&.yielded_values,
-        return_value: result
+        return_value: value
       )
 
-      result
+      value
     end
 
     def respond_to_missing?(method_name, include_private = false)
       target.respond_to?(method_name, include_private) || super
+    end
+
+    def target_class
+      target.class.name
+    end
+
+    def target_value
+      target.to_s
+    end
+
+    def result
+      Result.new(self)
     end
 
     private
