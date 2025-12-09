@@ -16,6 +16,7 @@ module Wiretap
           }.compact
         end
       ) if proxied_object.called_methods.any?
+      result
     end
 
     private
